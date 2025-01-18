@@ -11,7 +11,7 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
 
   const djPermission = async (
     memberId: string,
-    guildId: string
+    guildId: string,
   ): Promise<boolean> => {
     const guild = client.guilds.cache.get(guildId);
     if (!guild) return false;
@@ -54,7 +54,7 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
       return handleError(
         socket,
         "player:update",
-        "No active player found. Please make sure there's a player currently running in the guild."
+        "No active player found. Please make sure there's a player currently running in the guild.",
       );
 
     emitPlayerUpdate(socket, player);
@@ -72,14 +72,14 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
         return handleError(
           socket,
           "player:connect",
-          "Member not found in the server."
+          "Member not found in the server.",
         );
       const channel = guild?.channels.cache.get(voiceChannelId);
       if (!channel || member.voice.channel?.id !== channel.id) {
         return handleError(
           socket,
           "player:connect",
-          "You must be in the voice channel to connect."
+          "You must be in the voice channel to connect.",
         );
       }
 
@@ -108,11 +108,11 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
           iconURL: member.user.displayAvatarURL(),
         })
         .setDescription(
-          `**Web Player**: Successfully connected to [**Dashboard**](${env.NEXT_PUBLIC_BASE_URL}/guild/${guildId})`
+          `**Web Player**: Successfully connected to [**Dashboard**](${env.NEXT_PUBLIC_BASE_URL}/guild/${guildId})`,
         );
 
       textChannel.send({ embeds: [embed] });
-    }
+    },
   );
 
   socket.on("player:disconnect", async ({ guildId, userId }) => {
@@ -121,7 +121,7 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
       return handleError(
         socket,
         "player:disconnect",
-        "No active player found. Please make sure there's a player currently running in the guild."
+        "No active player found. Please make sure there's a player currently running in the guild.",
       );
 
     const isDJ = await djPermission(userId, guildId);
@@ -129,7 +129,7 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
       return handleError(
         socket,
         "player:disconnect",
-        "You don't have the required permission to disconnect. Only users with DJ roles are allowed to do."
+        "You don't have the required permission to disconnect. Only users with DJ roles are allowed to do.",
       );
     const guild = client.guilds.cache.get(guildId);
     const member = await guild?.members.fetch(userId);
@@ -138,14 +138,14 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
       return handleError(
         socket,
         "player:dicsonnect",
-        "Member not found in the server."
+        "Member not found in the server.",
       );
     const channel = guild?.channels.cache.get(player.voiceChannelId!);
     if (!channel || member.voice.channel?.id !== channel.id) {
       return handleError(
         socket,
         "player:disconnect",
-        "You must be in the voice channel to disconnect."
+        "You must be in the voice channel to disconnect.",
       );
     }
     const textChannel = guild?.channels.cache.get(player.textChannelId!);
@@ -159,7 +159,7 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
         iconURL: member.user.displayAvatarURL(),
       })
       .setDescription(
-        `**Web Player**: Successfully disconnected By - ${member.user.username}`
+        `**Web Player**: Successfully disconnected By - ${member.user.username}`,
       );
 
     textChannel.send({ embeds: [embed] });
@@ -174,14 +174,14 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
       return handleError(
         socket,
         "player:control:playpause",
-        "No active player found. Please make sure there's a player currently running in the guild."
+        "No active player found. Please make sure there's a player currently running in the guild.",
       );
     const isDJ = await djPermission(userId, guildId);
     if (!isDJ)
       return handleError(
         socket,
         "player:control",
-        "You don't have the required permission to play/pause. Only users with DJ roles are allowed to do."
+        "You don't have the required permission to play/pause. Only users with DJ roles are allowed to do.",
       );
     player.paused ? player.resume() : player.pause();
     emitPlayerUpdate(socket, player);
@@ -193,14 +193,14 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
       return handleError(
         socket,
         "player:control:previous",
-        "No active player found. Please make sure there's a player currently running in the guild."
+        "No active player found. Please make sure there's a player currently running in the guild.",
       );
     const isDJ = await djPermission(userId, guildId);
     if (!isDJ)
       return handleError(
         socket,
         "player:control",
-        "You don't have the required permission to play previous. Only users with DJ roles are allowed to do."
+        "You don't have the required permission to play previous. Only users with DJ roles are allowed to do.",
       );
     const previousTrack = player.queue.previous[0];
     player.play({ track: previousTrack });
@@ -217,7 +217,7 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
       return handleError(
         socket,
         "player:control",
-        "You don't have the required permission to skip. Only users with DJ roles are allowed to do."
+        "You don't have the required permission to skip. Only users with DJ roles are allowed to do.",
       );
     player.skip();
     emitPlayerUpdate(socket, player);
@@ -229,14 +229,14 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
       return handleError(
         socket,
         "player:control:seek",
-        "No active player found. Please make sure there's a player currently running in the guild."
+        "No active player found. Please make sure there's a player currently running in the guild.",
       );
     const isDJ = await djPermission(userId, guildId);
     if (!isDJ)
       return handleError(
         socket,
         "player:control",
-        "You don't have the required permission to seek. Only users with DJ roles are allowed to do."
+        "You don't have the required permission to seek. Only users with DJ roles are allowed to do.",
       );
     player.seek(position);
     emitPlayerUpdate(socket, player);
@@ -248,14 +248,14 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
       return handleError(
         socket,
         "player:control:volume",
-        "No active player found. Please make sure there's a player currently running in the guild."
+        "No active player found. Please make sure there's a player currently running in the guild.",
       );
     const isDJ = await djPermission(userId, guildId);
     if (!isDJ)
       return handleError(
         socket,
         "player:control",
-        "You don't have the required permission to change volume. Only users with DJ roles are allowed to do."
+        "You don't have the required permission to change volume. Only users with DJ roles are allowed to do.",
       );
     player.setVolume(volume);
     emitPlayerUpdate(socket, player);
@@ -269,18 +269,18 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
         return handleError(
           socket,
           "player:control:removeTrack",
-          "No active player found. Please make sure there's a player currently running in the guild."
+          "No active player found. Please make sure there's a player currently running in the guild.",
         );
       const isDJ = await djPermission(userId, guildId);
       if (!isDJ)
         return handleError(
           socket,
           "player:control",
-          "You don't have the required permission to remove track. Only users with DJ roles are allowed to do."
+          "You don't have the required permission to remove track. Only users with DJ roles are allowed to do.",
         );
       player.queue.remove(index);
       emitPlayerUpdate(socket, player);
-    }
+    },
   );
 
   socket.on("player:control:playTrack", async ({ guildId, userId, index }) => {
@@ -289,14 +289,14 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
       return handleError(
         socket,
         "player:control:playTrack",
-        "No active player found. Please make sure there's a player currently running in the guild."
+        "No active player found. Please make sure there's a player currently running in the guild.",
       );
     const isDJ = await djPermission(userId, guildId);
     if (!isDJ)
       return handleError(
         socket,
         "player:control",
-        "You don't have the required permission to play track. Only users with DJ roles are allowed to do."
+        "You don't have the required permission to play track. Only users with DJ roles are allowed to do.",
       );
     const track = player.queue.tracks[index];
     player.queue.remove(index);
@@ -310,14 +310,14 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
       return handleError(
         socket,
         "player:control:shuffle",
-        "No active player found. Please make sure there's a player currently running in the guild."
+        "No active player found. Please make sure there's a player currently running in the guild.",
       );
     const isDJ = await djPermission(userId, guildId);
     if (!isDJ)
       return handleError(
         socket,
         "player:control",
-        "You don't have the required permission to shuffle. Only users with DJ roles are allowed to do."
+        "You don't have the required permission to shuffle. Only users with DJ roles are allowed to do.",
       );
     player.queue.shuffle();
     emitPlayerUpdate(socket, player);
@@ -329,14 +329,14 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
       return handleError(
         socket,
         "player:control:loop",
-        "No active player found. Please make sure there's a player currently running in the guild."
+        "No active player found. Please make sure there's a player currently running in the guild.",
       );
     const isDJ = await djPermission(userId, guildId);
     if (!isDJ)
       return handleError(
         socket,
         "player:control",
-        "You don't have the required permission to loop. Only users with DJ roles are allowed to do."
+        "You don't have the required permission to loop. Only users with DJ roles are allowed to do.",
       );
     if (loop) player.repeatMode = "track";
     else player.repeatMode = "off";
@@ -351,14 +351,14 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
       return handleError(
         socket,
         "player:control:autoPlay",
-        "No active player found. Please make sure there's a player currently running in the guild."
+        "No active player found. Please make sure there's a player currently running in the guild.",
       );
     const isDJ = djPermission(userId, guildId);
     if (!isDJ)
       return handleError(
         socket,
         "player:control",
-        "You don't have the required permission to enable/disable autoplay. Only users with DJ roles are allowed to do."
+        "You don't have the required permission to enable/disable autoplay. Only users with DJ roles are allowed to do.",
       );
     player.set("autoplay", enabled);
     emitPlayerUpdate(socket, player);
@@ -387,7 +387,7 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
       return handleError(
         socket,
         "player:playTrack",
-        "No active player found. Please make sure there's a player currently running in the guild."
+        "No active player found. Please make sure there's a player currently running in the guild.",
       );
 
     await player.play({
@@ -403,7 +403,7 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
       return handleError(
         socket,
         "player:queue",
-        "No active player found. Please make sure there's a player currently running in the guild."
+        "No active player found. Please make sure there's a player currently running in the guild.",
       );
 
     await player.queue.add(track);
@@ -417,7 +417,7 @@ export default function playerEvents(socket: Socket, client: Lavamusic) {
       return handleError(
         socket,
         "voiceState",
-        "No active player found. Please make sure there's a player currently running in the guild."
+        "No active player found. Please make sure there's a player currently running in the guild.",
       );
     const guild = client.guilds.cache.get(guildId);
     if (!guild) return;
