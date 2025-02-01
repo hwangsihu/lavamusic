@@ -4,8 +4,8 @@ FROM node:23 AS builder
 WORKDIR /opt/lavamusic/
 
 # Copy only package files and install dependencies
-COPY package*.json ./
-RUN npm install --legacy-peer-deps
+COPY package.json ./
+RUN npm install -f
 
 # Copy source code and configuration
 COPY . .
